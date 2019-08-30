@@ -1,0 +1,4 @@
+# KBDSPAM
+Keyboard spam emulator.
+
+Usage: KBDSPAM.EXC <NUMBER O' CHARACTERS> [--NOSPACE] [--NONUMBER] [--NO$] [--NOUPPER] [--ALLUPPER]
