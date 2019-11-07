@@ -8,13 +8,16 @@
 int main(int argc, char **argv)
 {
   if(argc==1){puts("[X] TOO FEW OPTIONS");return(-1);};
-  if(argc==2 && (strcmp(argv[1],"--help")==0 || strcmp(argv[1],"--HELP")==0)){puts("[i] KBDSPAM V1.0");puts("[i] (C)2019 UMBRELLA STUDIO");puts("[i] KBDSPAM.EXC <NUMBER O\' CHARACTERS> [--NOSPACE] [--NONUMBER] [--NO$] [--NOUPPER] [--ALLUPPER]");return(0);};
+  if(argc==2 && (strcmp(argv[1],"--help")==0 || strcmp(argv[1],"--HELP")==0)){puts("[i] KBDSPAM V1.0");puts("[i] (C)2019 UMBRELLA STUDIO");puts("[i] KBDSPAM.EXC <NUMBER O\' CHARACTERS> [--NOSPACE] [--NONUMBER] [--NO$] [--NOUPPER] [--ALLUPPER] [--NORETURN] [--DEBUG]");return(0);};
+  if(strchr(argv[1],'-')!=0){puts("[X] NUMBER NOT ACCEPTABLE");return(-1);};
   short nospace=0;
   short nonumber=0;
   short no$=0;
   short noupper=0;
   short allupper=0;
   short aa=0;
+  short debug=0;
+  short noreturn=0;
   unsigned int aaa=atoi(argv[1]);
   unsigned char a=32;
   struct timeval tv;
@@ -28,13 +31,15 @@ int main(int argc, char **argv)
   else if(strcmp(cc,"--NO$")==0){no$=1;}
   else if(strcmp(cc,"--NOUPPER")==0){noupper=1;}
   else if(strcmp(cc,"--ALLUPPER")==0){allupper=1;}
+  else if(strcmp(cc,"--DEBUG")==0){debug=1;}
+  else if(strcmp(cc,"--NORETURN")==0){noreturn=1;}
   else{ccc=1;};
   }
   for(short i=2;i<argc;i++){c(argv[i]);};
-  if(ccc==1){puts("[!] AT LEAST 1 INVALID OPTION DETECTED IN COMMAND");};
-  if(aaa<=1){puts("[X] NUMBER NOT ACCEPTABLE");return(-1);};
-  if(argc>=7){puts("[X] TOO MANY OPTIONS");return(-1);};
-  printf("[i] ");while(aa<argc){printf("%s ",argv[aa]);aa++;};printf("PROCESSING\n");
+  if(debug==1){if(ccc==1){puts("[!] AT LEAST 1 INVALID OPTION DETECTED IN COMMAND");};};
+  if(aaa<1){puts("[X] NUMBER NOT ACCEPTABLE");return(-1);};
+  if(argc>=9){puts("[X] TOO MANY OPTIONS");return(-1);};
+  if(debug==1){printf("[D] ");while(aa<argc){printf("%s ",argv[aa]);aa++;};printf("PROCESSING\n");};
   gettimeofday(&tv,NULL);
   srand(tv.tv_sec*1000000);
 
@@ -51,7 +56,7 @@ int main(int argc, char **argv)
   printf("%c",a);
   aaaa++;
   }
-
-  printf("\n[i] %d CHARACTERS DONE\n",aaa);
+  if(noreturn==0){puts("");};
+  if(debug==1){printf("[D] %d CHARACTERS DONE\n",aaa);};
   return aaa;
 }
