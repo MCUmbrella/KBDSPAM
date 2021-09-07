@@ -1,4 +1,8 @@
 # KBDSPAM
-Keyboard spam emulator.
+The 'keyboard spam emulator' - generate random ASCII characters
 
-Usage: KBDSPAM.EXC <NUMBER O\' CHARACTERS> [--NOSPACE] [--NONUMBER] [--NO$] [--NOUPPER] [--ALLUPPER] [--NORETURN] [--DEBUG]
+Usage:
+```
+kbdspam <character amount> [--noSpace || -s] [--noNumber || -n] [--noSpecial || -$]
+        [(--noUpper || -u) || (--allUpper || -a)] [--noNewLine || -r] [--debug || -d]
+```

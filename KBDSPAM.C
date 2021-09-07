@@ -3,60 +3,136 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <string.h>
-#define max 126
-#define min 32
+#include <ctype.h>
+
+#define MAX_CHAR_RANGE 126
+#define MIN_CHAR_RANGE 32
+
+short noSpace = 0;
+short noNumber = 0;
+short noSpecial = 0;
+short noUpper = 0;
+short allUpper = 0;
+short debug = 0;
+short noNewLine = 0;
+short unknownArgument = 0;
+unsigned char converted = 32;
+struct timeval tv;
+unsigned int generated;
+
+void parseArgument(char arg[])
+{
+  if (!strcmp(arg, "--nospace") || !strcmp(arg, "-s"))
+    noSpace = 1;
+  else if (!strcmp(arg, "--nonumber") || !strcmp(arg, "-n"))
+    noNumber = 1;
+  else if (!strcmp(arg, "--nospecial") || !strcmp(arg, "-$"))
+    noSpecial = 1;
+  else if (!strcmp(arg, "--noupper") || !strcmp(arg, "-u"))
+    noUpper = 1;
+  else if (!strcmp(arg, "--allupper") || !strcmp(arg, "-a"))
+    allUpper = 1;
+  else if (!strcmp(arg, "--nonewline") || !strcmp(arg, "-r"))
+    noNewLine = 1;
+  else if (!strcmp(arg, "--debug") || !strcmp(arg, "-d"))
+    debug = 1;
+  else
+    unknownArgument = 1;
+}
+
+void toLowerString(char str[])
+{
+  int i = 0;
+  char c;
+  while (str[i])
+  {
+    c = str[i];
+    if (c >= 65 && c <= 90)
+      str[i] = c + 32;
+    i++;
+  }
+}
+
 int main(int argc, char **argv)
 {
-  if(argc==1){puts("[X] TOO FEW OPTIONS");return(-1);};
-  if(argc==2 && (strcmp(argv[1],"--help")==0 || strcmp(argv[1],"--HELP")==0)){puts("[i] KBDSPAM V1.0");puts("[i] (C)2019 UMBRELLA STUDIO");puts("[i] KBDSPAM.EXC <NUMBER O\' CHARACTERS> [--NOSPACE] [--NONUMBER] [--NO$] [--NOUPPER] [--ALLUPPER] [--NORETURN] [--DEBUG]");return(0);};
-  if(strchr(argv[1],'-')!=0){puts("[X] NUMBER NOT ACCEPTABLE");return(-1);};
-  short nospace=0;
-  short nonumber=0;
-  short no$=0;
-  short noupper=0;
-  short allupper=0;
-  short aa=0;
-  short debug=0;
-  short noreturn=0;
-  unsigned int aaa=atoi(argv[1]);
-  unsigned char a=32;
-  struct timeval tv;
-  unsigned int num;
-  unsigned int aaaa=0;
-  short ccc=0;
-
-  void c(char cc[]){
-  if(strcmp(cc,"--NOSPACE")==0){nospace=1;}
-  else if(strcmp(cc,"--NONUMBER")==0){nonumber=1;}
-  else if(strcmp(cc,"--NO$")==0){no$=1;}
-  else if(strcmp(cc,"--NOUPPER")==0){noupper=1;}
-  else if(strcmp(cc,"--ALLUPPER")==0){allupper=1;}
-  else if(strcmp(cc,"--DEBUG")==0){debug=1;}
-  else if(strcmp(cc,"--NORETURN")==0){noreturn=1;}
-  else{ccc=1;};
-  }
-  for(short i=2;i<argc;i++){c(argv[i]);};
-  if(debug==1){if(ccc==1){puts("[!] AT LEAST 1 INVALID OPTION DETECTED IN COMMAND");};};
-  if(aaa<1){puts("[X] NUMBER NOT ACCEPTABLE");return(-1);};
-  if(argc>=9){puts("[X] TOO MANY OPTIONS");return(-1);};
-  if(debug==1){printf("[D] ");while(aa<argc){printf("%s ",argv[aa]);aa++;};printf("PROCESSING\n");};
-  gettimeofday(&tv,NULL);
-  srand(tv.tv_sec*1000000);
-
-  while(aaaa<aaa)
+  unsigned int amount = atoi(argv[1]);
+  gettimeofday(&tv, NULL);
+  srand(tv.tv_usec);
+  if (argc == 1)
   {
-  r:
-  num=rand()%(max-min)+min;
-  a=num;
-  if(nospace==1 && num==32){goto r;};
-  if(nonumber==1 && num>=48 && num<=57){goto r;};
-  if(no$==1 && ((num>=33 && num<=47) || (num>=58 && num<=64) || (num>=91 && num<=96) || (num>=123 && num<=126))){goto r;};
-  if(noupper==1 && num>=65 && num<=90){goto r;};
-  if(allupper==1 && num>=97 && num<=122){goto r;};
-  printf("%c",a);
-  aaaa++;
+    puts("[X] TOO FEW OPTIONS");
+    return (-1);
+  };
+  for (int a = 0; a != argc; a++)
+    toLowerString(argv[a]);
+  if (argc == 2 && ((!strcmp(argv[1], "--help")) || !strcmp(argv[1], "-h")))
+  {
+    puts("[i] KBDSPAM V1.3\n    (C)2019-2021 UMBRELLA STUDIO\n    Usage: kbdspam <character amount> [--noSpace || -s] [--noNumber || -n] [--noSpecial || -$]\n                  [(--noUpper || -u) || (--allUpper || -a)] [--noNewLine || -r] [--debug || -d]");
+    return (0);
+  };
+  if (strchr(argv[1], '-'))
+  {
+    puts("[X] NUMBER NOT ACCEPTABLE");
+    return (-1);
+  };
+
+  for (short i = 2; i < argc; i++)
+    parseArgument(argv[i]);
+  if (debug && unknownArgument)
+    puts("[!] UNKNOWN ARGUMENT FOUND IN COMMAND");
+  if (amount < 1)
+  {
+    puts("[X] NUMBER NOT ACCEPTABLE");
+    return (-1);
   }
-  if(noreturn==0){puts("");};
-  if(debug==1){printf("[D] %d CHARACTERS DONE\n",aaa);};
-  return aaa;
+  if (noSpace && noNumber && noSpecial && noUpper && allUpper)
+  {
+    puts("[X] TOO MANY OPTIONS");
+    return (-1);
+  }
+  if (debug)
+  {
+    printf("[D] ");
+    for (int a = 0; a < argc; a++)
+      printf("%s ", argv[a]);
+    printf("PROCESSING\n");
+  }
+
+  for (unsigned int genCount = 0; genCount < amount; genCount++)
+  {
+    generated = rand() % (MAX_CHAR_RANGE - MIN_CHAR_RANGE) + MIN_CHAR_RANGE;
+    converted = generated;
+    if (noSpace && generated == 32)// ignore ' '
+    {
+      genCount--;
+      continue;
+    }
+    if (noNumber && generated >= 48 && generated <= 57)// ignore '0-9'
+    {
+      genCount--;
+      continue;
+    }
+    if (noSpecial && ((generated >= 33 && generated <= 47) || (generated >= 58 && generated <= 64) || (generated >= 91 && generated <= 96) || (generated >= 123 && generated <= 126)))// ignore special characters
+    {
+      genCount--;
+      continue;
+    }
+    if (noUpper && generated >= 65 && generated <= 90)// ignore 'A-Z'
+    {
+      genCount--;
+      continue;
+    }
+    if (allUpper && generated >= 97 && generated <= 122)// ignore 'a-z'
+    {
+      genCount--;
+      continue;
+    }
+    printf("%c", converted);
+    gettimeofday(&tv, NULL);
+  }
+  if (!noNewLine)
+    puts("");
+  if (debug)
+    printf("[D] %d CHARS GENERATED\n", amount);
+  return amount;
 }
